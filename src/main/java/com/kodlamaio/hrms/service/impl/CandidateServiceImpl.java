@@ -20,7 +20,6 @@ import com.kodlamaio.hrms.service.VerificationService;
 
 import tr.gov.nvi.tckimlik.WS.KPSPublicSoapProxy;
 
-//  String[] arr = str.split(" "); kullanılacak
 @Service
 public class CandidateServiceImpl extends BaseResultService<Candidate> implements CandidateService {
 
@@ -46,7 +45,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 				return new ErrorDataResult<Candidate>("Bu email kullanımda");
 			}
 			if (!this.kpsPublicSoapProxy.TCKimlikNoDogrula(requestCandidate.getIdentityNumber(),
-					requestCandidate.getName(), requestCandidate.getLastName(), 1992)) {
+					requestCandidate.getName(), requestCandidate.getLastName(), requestCandidate.getBirtOfDate().getYear())) {
 				return new ErrorDataResult<Candidate>("Tc vatandaş doğrulaması yapılamadı.");
 			}
 			token = UUID.randomUUID().toString();
