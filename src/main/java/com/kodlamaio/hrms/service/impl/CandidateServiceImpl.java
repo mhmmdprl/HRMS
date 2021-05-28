@@ -1,5 +1,6 @@
 package com.kodlamaio.hrms.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,10 +43,31 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 		String url = "http://localhost:8080/activation?token=";
 		try {
 			if (this.existsEmployeeByEmail(requestCandidate.getEmail())) {
-				return new ErrorDataResult<Candidate>("Bu email kullanımda");
+				candidate = this.candidateRepository.findByEmail(requestCandidate.getEmail());
+				if (candidate.isAcctive()) {
+					return new ErrorDataResult<Candidate>("Bu email kullanımda");
+				}
+				verification = this.verificationService.findByUserId(candidate.getId());
+				if (this.verificationService.validateToken(verification)) {
+					verification.setDeleted('1');
+					this.verificationService.save(verification);
+					Verification newVerification = new Verification();
+					token = UUID.randomUUID().toString();
+					newVerification.setVerificationCode(token);
+					newVerification.setExpiryDate(new Date(System.currentTimeMillis() + Verification.EXPIRATION));
+					newVerification.setUserId(candidate.getId());
+					this.emailService.sendSimpleMessage(requestCandidate.getEmail(), "Aktivasyon Mail", url + token);
+					return new SuccessDataResult<>(
+							"Email adresinize yeni aktivasyon kodu gönderildi.Süresi bitmeden onaylayınız");
+				}
+				token = verification.getVerificationCode();
+				this.emailService.sendSimpleMessage(requestCandidate.getEmail(), "Aktivasyon Mail", url + token);
+				return new SuccessDataResult<>("Email adresinize token tekrar gönderildi");
+
 			}
 			if (!this.kpsPublicSoapProxy.TCKimlikNoDogrula(requestCandidate.getIdentityNumber(),
-					requestCandidate.getName(), requestCandidate.getLastName(), requestCandidate.getBirtOfDate().getYear())) {
+					requestCandidate.getName(), requestCandidate.getLastName(),
+					requestCandidate.getBirtOfDate().getYear())) {
 				return new ErrorDataResult<Candidate>("Tc vatandaş doğrulaması yapılamadı.");
 			}
 			token = UUID.randomUUID().toString();
@@ -72,7 +94,5 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 	public DataResult<List<Candidate>> findAll() {
 		return new SuccessDataResult<List<Candidate>>(this.candidateRepository.findAll());
 	}
-
-
 
 }

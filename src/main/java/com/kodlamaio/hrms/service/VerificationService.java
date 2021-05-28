@@ -10,4 +10,11 @@ public interface VerificationService {
 	public Verification findByVerificationCode(String verificationCode);
 
 	public Result activation(String verificationCode); 
+	
+	public boolean validateToken(Verification verification);
+
+	public Verification findByUserId(Long id);
+	
+	
+	
 }

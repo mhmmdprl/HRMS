@@ -15,7 +15,6 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -47,8 +46,6 @@ public abstract class BaseEntity {
 	@Column(name = "UPDATED_BY", insertable = false)
 	private Long updatedBy;
 
-	@JsonProperty("STATUS")
-	@Column(name="STATUS")
-	private int status = 1;
+
 
 }

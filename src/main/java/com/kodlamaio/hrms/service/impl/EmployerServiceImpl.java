@@ -1,5 +1,6 @@
 package com.kodlamaio.hrms.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,13 +38,34 @@ public class EmployerServiceImpl implements EmployerService {
 		Verification verification = null;
 		String url = "http://localhost:8080/activation?token=";
 		try {
-			if (this.employerRepository.existsByEmail(employerRequest.getEmail())) {
 
-				return new ErrorDataResult<>("Email kullanımda");
+			if (this.employerRepository.existsByEmail(employerRequest.getEmail())) {
+				employer = this.employerRepository.findByEmail(employerRequest.getEmail());
+				if (employer.isAcctive()) {
+					return new ErrorDataResult<>("Email kullanımda");
+				}
+
+				verification = this.verificationService.findByUserId(employer.getId());
+				if (this.verificationService.validateToken(verification)) {
+					verification.setDeleted('1');
+					this.verificationService.save(verification);
+					Verification newVerification = new Verification();
+					token = UUID.randomUUID().toString();
+					newVerification.setVerificationCode(token);
+					newVerification.setExpiryDate(new Date(System.currentTimeMillis() + Verification.EXPIRATION));
+					newVerification.setUserId(employer.getId());
+					this.emailService.sendSimpleMessage(employerRequest.getEmail(), "Aktivasyon Mail", url + token);
+					return new SuccessDataResult<>(
+							"Email adresinize yeni aktivasyon kodu gönderildi.Süresi bitmeden onaylayınız");
+				}
+				token = verification.getVerificationCode();
+				this.emailService.sendSimpleMessage(employerRequest.getEmail(), "Aktivasyon Mail", url + token);
+				return new SuccessDataResult<>("Email adresinize token tekrar gönderildi");
+
 			}
 			employer = new Employer();
 			if (!employerRequest.getWebAdress().startsWith("www.")) {
-				return new ErrorDataResult<EmployerRequest>("Geçersiz web sitesi!");
+				return new ErrorDataResult<>("Geçersiz web sitesi!");
 			}
 			emailParse = employerRequest.getEmail().split("@");
 			webParse = employerRequest.getWebAdress().replace("www.", "");
@@ -61,6 +83,7 @@ public class EmployerServiceImpl implements EmployerService {
 			verification = new Verification();
 			verification.setVerificationCode(token);
 			verification.setUserId(employer.getId());
+			verification.setExpiryDate(new Date(System.currentTimeMillis() + Verification.EXPIRATION));
 			this.verificationService.save(verification);
 			this.emailService.sendSimpleMessage(employerRequest.getEmail(), "Aktivasyon Mail", url + token);
 		} catch (Exception e) {
@@ -72,8 +95,9 @@ public class EmployerServiceImpl implements EmployerService {
 
 	@Override
 	public DataResult<List<Employer>> getAll() {
-		
+
 		return new SuccessDataResult<List<Employer>>(this.employerRepository.findAll());
 	}
+
 
 }

@@ -7,4 +7,6 @@ import com.kodlamaio.hrms.entities.Verification;
 public interface VerificationRepository  extends JpaRepository<Verification, Long>{
 
 	public Verification findByVerificationCode(String verificationCode);
+
+	public Verification findByUserId(Long id);
 }
