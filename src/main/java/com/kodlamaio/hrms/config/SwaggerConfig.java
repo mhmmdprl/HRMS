@@ -20,5 +20,7 @@ public class SwaggerConfig {
 	          .select()                                  
 	          .apis(RequestHandlerSelectors.basePackage("com.kodlamaio.hrms"))              
 	          .paths(PathSelectors.any())                          
-	          .build();                                           
-	    }}
+	          .build();          
+	     
+	    }
+	 }

@@ -45,7 +45,6 @@ public abstract class BaseEntity {
 
 	@Column(name = "UPDATED_BY", insertable = false)
 	private Long updatedBy;
-
-
+	
 
 }

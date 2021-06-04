@@ -95,4 +95,10 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 		return new SuccessDataResult<List<Candidate>>(this.candidateRepository.findAll());
 	}
 
+	@Override
+	public Candidate findById(Long id) {
+		
+		return this.candidateRepository.findById(id).orElseThrow();
+	}
+
 }

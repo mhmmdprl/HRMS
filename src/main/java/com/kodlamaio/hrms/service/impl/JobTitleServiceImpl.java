@@ -41,4 +41,15 @@ public class JobTitleServiceImpl implements JobTitleService {
 		return new SuccessDataResult<List<JobTitle>>(this.jobTitleRepository.findAll());
 	}
 
+	@Override
+	public JobTitle findById(Long jobTitleId) {
+		return this.jobTitleRepository.findById(jobTitleId).get();
+	}
+
+	@Override
+	public JobTitle findByTitle(String jobTitleName) {
+		
+		return this.jobTitleRepository.findByTitle(jobTitleName);
+	}
+
 }

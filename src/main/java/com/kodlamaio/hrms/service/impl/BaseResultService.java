@@ -13,7 +13,6 @@ public class BaseResultService<T> {
 		response.setSuccess(true);
 		response.setResultCode(HttpStatus.OK.value());
 		return response;
-
 	}
 
 	public GenericResponse<T> operationFail(Exception e, Logger logger) {

@@ -11,5 +11,7 @@ public interface CandidateService  extends BaseService<Candidate>{
 
 	public DataResult<List<Candidate>> findAll();
 	
+	public Candidate findById(Long id);
+	
 	
 }

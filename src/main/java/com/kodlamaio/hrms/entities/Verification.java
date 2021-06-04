@@ -23,7 +23,7 @@ public class Verification extends BaseEntity{
     public static final int EXPIRATION = 60 * 1000 * 1;
 	
 	private String verificationCode;
-	
+
 	private Long userId;
 	
 	private Date expiryDate;

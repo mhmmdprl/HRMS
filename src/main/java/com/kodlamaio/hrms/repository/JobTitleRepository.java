@@ -8,4 +8,6 @@ public interface JobTitleRepository extends JpaRepository<JobTitle,Long>{
 
 	boolean existsByTitle(String title);
 
+	JobTitle findByTitle(String jobTitleName);
+
 }

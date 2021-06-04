@@ -99,5 +99,11 @@ public class EmployerServiceImpl implements EmployerService {
 		return new SuccessDataResult<List<Employer>>(this.employerRepository.findAll());
 	}
 
+	@Override
+	public Employer findById(Long employerId) {
+		
+		return this.employerRepository.findById(employerId).get();
+	}
+
 
 }

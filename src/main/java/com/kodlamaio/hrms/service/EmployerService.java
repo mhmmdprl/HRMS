@@ -9,6 +9,8 @@ import com.kodlamaio.hrms.result.DataResult;
 public interface EmployerService extends BaseService<EmployerRequest> {
 
 	DataResult<List<Employer>> getAll();
+
+	Employer findById(Long employerId);
 	
 
 }

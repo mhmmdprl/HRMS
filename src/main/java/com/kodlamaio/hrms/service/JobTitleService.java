@@ -13,4 +13,8 @@ public interface JobTitleService {
 
 	DataResult<List<JobTitle>> getAll();
 
+	JobTitle findById(Long jobTitleId);
+
+	JobTitle findByTitle(String jobTitleName);
+
 }
