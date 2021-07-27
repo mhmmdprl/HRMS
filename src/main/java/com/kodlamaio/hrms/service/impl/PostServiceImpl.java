@@ -202,7 +202,7 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public Post findByIdForOtherServiceForAdmin(Long id) {
-		return this.postRepository.findById(id).orElseThrow();
+		return this.postRepository.findById(id).get();
 	}
 
 }

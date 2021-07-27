@@ -69,7 +69,7 @@ public class UserServiceImp implements UserDetailsService, UserService {
 	public Result changePassword(ChangePaswordRequest changePasswordRequest, Long userId) {
 		User user = null;
 		try {
-			user = this.userRepository.findById(userId).orElseThrow();
+			user = this.userRepository.findById(userId).get();
 			if (this.bcryptEncode.matches(changePasswordRequest.getCurrentPassword(), user.getPassword())) {
 
 				if (changePasswordRequest.getNewPassword().equals(changePasswordRequest.getReNewPassword())) {
@@ -90,7 +90,7 @@ public class UserServiceImp implements UserDetailsService, UserService {
 
 	@Override
 	public User findById(Long id) {
-		return this.userRepository.findById(id).orElseThrow();
+		return this.userRepository.findById(id).get();
 	}
 
 }

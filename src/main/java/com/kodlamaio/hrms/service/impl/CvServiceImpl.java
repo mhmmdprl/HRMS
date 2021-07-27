@@ -207,7 +207,7 @@ public class CvServiceImpl implements CvService {
 	public Result updateSchool(Long cvId, List<SchoolRequest> schoolRequest) {
 		Cv cv = null;
 		try {
-			cv = this.cvRepository.findById(cvId).orElseThrow();
+			cv = this.cvRepository.findById(cvId).get();
 			cv.setSchools(schoolRequest.stream().map(school -> this.modelMapper.map(school, School.class))
 					.collect(Collectors.toList()));
 			cv.getSchools().forEach(item -> {
@@ -231,7 +231,7 @@ public class CvServiceImpl implements CvService {
 	public Result updateExperience(Long cvId, List<WorkExperienceRequest> experiences) {
 		Cv cv = null;
 		try {
-			cv = this.cvRepository.findById(cvId).orElseThrow();
+			cv = this.cvRepository.findById(cvId).get();
 			cv.setExperiences(experiences.stream().map(exp -> this.modelMapper.map(exp, WorkExperience.class))
 					.collect(Collectors.toList()));
 			cv.getExperiences().forEach(item -> {
@@ -257,7 +257,7 @@ public class CvServiceImpl implements CvService {
 		Cv cv = null;
 		CandidateDetail candidateDetail = null;
 		try {
-			cv = this.cvRepository.findById(cvId).orElseThrow();
+			cv = this.cvRepository.findById(cvId).get();
 			candidateDetail = cv.getCandidateDetail();
 			candidateDetail.setLanguages(langs.stream().map(item -> this.modelMapper.map(item, Language.class))
 					.collect(Collectors.toList()));
@@ -275,7 +275,7 @@ public class CvServiceImpl implements CvService {
 		Cv cv = null;
 		CandidateDetail candidateDetail = null;
 		try {
-			cv = this.cvRepository.findById(cvId).orElseThrow();
+			cv = this.cvRepository.findById(cvId).get();
 			candidateDetail = cv.getCandidateDetail();
 			candidateDetail.setProgrammingLanguages(progLangs.stream()
 					.map(item -> this.modelMapper.map(item, ProgrammingLanguage.class)).collect(Collectors.toList()));
@@ -293,7 +293,7 @@ public class CvServiceImpl implements CvService {
 		Cv cv = null;
 
 		try {
-			cv = this.cvRepository.findById(cvId).orElseThrow();
+			cv = this.cvRepository.findById(cvId).get();
 			cv.setAbilities(abilities.stream().map(item -> this.abilityService.findByName(item.getAbilityName()))
 					.collect(Collectors.toList()));
 			this.cvRepository.save(cv);

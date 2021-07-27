@@ -52,7 +52,7 @@ public class OperationServiceImpl implements OperationService {
 
 	@Override
 	public Operation findById(Long operationId) {
-		return this.operationRepository.findById(operationId).orElseThrow();
+		return this.operationRepository.findById(operationId).get();
 	}
 
 	@Override

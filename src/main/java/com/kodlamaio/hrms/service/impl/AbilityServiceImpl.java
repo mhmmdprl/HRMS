@@ -18,7 +18,7 @@ public class AbilityServiceImpl implements AbilityService {
 	private AbilityRepository abilityRepository;
 	@Override
 	public Ability findById(Long id) {
-		return this.abilityRepository.findById(id).orElseThrow();
+		return this.abilityRepository.findById(id).get();
 	}
 	@Override
 	public DataResult<List<Ability>> getAll() {

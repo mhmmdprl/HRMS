@@ -214,7 +214,7 @@ public class JobPostingServiceImpl implements JobPostingService {
 	public Result update(JobPostingUpdateRequest jobPostingRequest, HttpServletRequest httpServletRequest) {
 		JobPosting jobPosting = null;
 		try {
-			jobPosting = this.jobPostingRepository.findById(jobPostingRequest.getId()).orElseThrow();
+			jobPosting = this.jobPostingRepository.findById(jobPostingRequest.getId()).get();
 			jobPosting.setCity(this.cityService.findByCityName(jobPostingRequest.getCityName()));
 			jobPosting.setJobTitle(this.jobTitleService.findByTitle(jobPostingRequest.getJobTitleName()));
 			jobPosting.setMaxSalary(jobPostingRequest.getMaxSalary());
@@ -236,7 +236,7 @@ public class JobPostingServiceImpl implements JobPostingService {
 	public Result deleteJobPosting(Long id) {
 		JobPosting jobPosting = null;
 		try {
-			jobPosting = this.jobPostingRepository.findById(id).orElseThrow();
+			jobPosting = this.jobPostingRepository.findById(id).get();
 			jobPosting.setDeleted('1');
 			this.jobPostingRepository.save(jobPosting);
 		} catch (Exception e) {
@@ -248,7 +248,7 @@ public class JobPostingServiceImpl implements JobPostingService {
 	@Override
 	public JobPosting findById(Long id) {
 
-		return this.jobPostingRepository.findById(id).orElseThrow();
+		return this.jobPostingRepository.findById(id).get();
 	}
 
 	@Override

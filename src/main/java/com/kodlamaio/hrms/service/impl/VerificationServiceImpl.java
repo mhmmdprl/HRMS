@@ -46,7 +46,7 @@ public class VerificationServiceImpl implements VerificationService {
 			return new ErrorResult("Token aktivasyon süresi bitti!");
 			
 		}
-		User user = this.userRepository.findById(verification.getUserId()).orElseThrow();
+		User user = this.userRepository.findById(verification.getUserId()).get();
 		user.setAcctive(true);
 		this.userRepository.save(user);
 		verification.setDeleted('1');

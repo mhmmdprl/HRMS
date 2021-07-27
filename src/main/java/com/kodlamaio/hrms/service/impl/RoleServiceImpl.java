@@ -42,7 +42,7 @@ public class RoleServiceImpl implements RoleService {
 		Operation operation = null;
 		Role role = null;
 		try {
-			role = this.roleRepository.findById(roleId).orElseThrow();
+			role = this.roleRepository.findById(roleId).get();
 			operation = this.operationService.findById(operationId);
 			if (role.getOperations().contains(operation)) {
 				return new ErrorResult("Operasyon zaten mevcut");
@@ -60,7 +60,7 @@ public class RoleServiceImpl implements RoleService {
 		Operation operation = null;
 		Role role = null;
 		try {
-			role = this.roleRepository.findById(roleId).orElseThrow();
+			role = this.roleRepository.findById(roleId).get();
 			operation = this.operationService.findById(operationId);
 			if (!role.getOperations().contains(operation)) {
 				return new ErrorResult("Operasyon zaten mevcut değil");
@@ -75,7 +75,7 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public Role findById(long id) {
-		return this.roleRepository.findById(id).orElseThrow();
+		return this.roleRepository.findById(id).get();
 	}
 
 }

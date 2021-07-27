@@ -130,7 +130,7 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public Comment findByIdForAdmin(Long id) {
-		return this.commentRepository.findById(id).orElseThrow();
+		return this.commentRepository.findById(id).get();
 	}
 
 	@Override

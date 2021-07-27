@@ -172,7 +172,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 		Candidate candidate = null;
 		try {
 			candidate = this.candidateRepository.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest))
-					.orElseThrow();
+					.get();
 			candidate.setName(candidateUpdateRequest.getName());
 			candidate.setLastName(candidateUpdateRequest.getLastName());
 			candidate.setBirtOfDate(candidateUpdateRequest.getBirtOfDate());
@@ -255,7 +255,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 		Candidate candidate = null;
 		try {
 			candidate = this.candidateRepository.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest))
-					.orElseThrow();
+					.get();
 			DataResult<Map<String, String>> result = this.imageService.uploadImage(file);
 			candidate.setProfilePhoto(result.getData().get("url"));
 			this.candidateRepository.save(candidate);
@@ -276,8 +276,8 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 				return new ErrorResult();
 			}
 			final Candidate requestCandidate = this.candidateRepository
-					.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest)).orElseThrow();
-			final Candidate responseCandidate = this.candidateRepository.findById(id).orElseThrow();
+					.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest)).get();
+			final Candidate responseCandidate = this.candidateRepository.findById(id).get();
 			if (requestCandidate.getMyConnections().removeIf(obj -> (obj.getId() == responseCandidate.getId()))) {
 				responseCandidate.getMyConnections().removeIf(obj -> (obj.getId() == requestCandidate.getId()));
 				message = "unconnect";
@@ -311,7 +311,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 		CandidateGetRequest candidateGetRequest = null;
 
 		try {
-			candidate = this.candidateRepository.findById(id).orElseThrow();
+			candidate = this.candidateRepository.findById(id).get();
 			candidateGetRequest = new CandidateGetRequest();
 			candidateGetRequest.setId(candidate.getId());
 			candidateGetRequest.setBirtOfDate(candidate.getBirtOfDate());
@@ -344,7 +344,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 
 	@Override
 	public Candidate findByIdForSevices(Long id) {
-		return this.candidateRepository.findById(id).orElseThrow();
+		return this.candidateRepository.findById(id).get();
 	}
 
 	@Override
@@ -357,7 +357,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 
 		try {
 			user = this.candidateRepository.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest))
-					.orElseThrow();
+					.get();
 			final List<Long> ids = new ArrayList<Long>();
 			user.getMyConnections().forEach(item -> {
 				ids.add(item.getId());
@@ -365,7 +365,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 
 			comparator = Comparator.comparing(item -> ids.contains(item.getId()));
 
-			candidate = this.candidateRepository.findById(id).orElseThrow();
+			candidate = this.candidateRepository.findById(id).get();
 			pageConnections = new PageImpl<CandidateGetConnecRequest>(candidate.getMyConnections().stream()
 					.sorted(comparator.reversed())
 					.map(item -> new CandidateGetConnecRequest(item.getId(), item.getName(), item.getLastName(),
@@ -387,7 +387,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 			}
 			final Employer employer = this.employerService.getById(id);
 			final Candidate candidate = this.candidateRepository
-					.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest)).orElseThrow();
+					.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest)).get();
 			if (candidate.getFollowings().removeIf(item -> (item.getId() == employer.getId()))) {
 				employer.getFollowers().removeIf(item -> (item.getId() == candidate.getId()));
 				message = "unfollow";
@@ -413,7 +413,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 		try {
 			JobPosting jobPosting = this.jobPostingService.findById(id);
 			Candidate candidate = this.candidateRepository
-					.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest)).orElseThrow();
+					.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest)).get();
 			if (candidate.getWhatILikes().removeIf(item -> item.getId() == jobPosting.getId())) {
 				jobPosting.getLikes().removeIf(item -> item.getId() == candidate.getId());
 				message = "dislike";
@@ -438,7 +438,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 		try {
 			Post post = this.postService.findByIdForOtherService(id);
 			Candidate candidate = this.candidateRepository
-					.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest)).orElseThrow();
+					.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest)).get();
 			if (candidate.getWhatILikesPost().removeIf(item -> item.getId() == post.getId())) {
 				post.getLikes().removeIf(item -> item.getId() == candidate.getId());
 				message = "dislike";
@@ -480,7 +480,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 		String message = "";
 		try {
 			JobPosting jobPosting = this.jobPostingService.findById(id);
-			Candidate candidate = this.candidateRepository.findById(userIdFromRequest).orElseThrow();
+			Candidate candidate = this.candidateRepository.findById(userIdFromRequest).get();
 			if (jobPosting.getPostApplications().contains(candidate)) {
 				message = "Daha önce başvurunuz bulunmaktadır";
 				return new ErrorResult(message);
@@ -525,7 +525,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 		Page<Candidate> pageCandidate = null;
 		Page<MainFeaturesOfTheCandidate> pageCandidateGetInterestingRequest = null;
 		try {
-			candidate = this.candidateRepository.findById(userIdFromRequest).orElseThrow();
+			candidate = this.candidateRepository.findById(userIdFromRequest).get();
 			pageCandidate = this.candidateRepository.getCommonConnects(userIdFromRequest,
 					candidate.getMyConnections().stream().map(Candidate::getId).collect(Collectors.toList()),
 					candidate.getMyConnections().stream().map(Candidate::getId).collect(Collectors.toList()), pageable);
@@ -580,7 +580,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 		Candidate candidate = null;
 		Page<CandidateGetConnecRequest> pageConnections = null;
 		try {
-			candidate = this.candidateRepository.findById(id).orElseThrow();
+			candidate = this.candidateRepository.findById(id).get();
 			pageConnections = new PageImpl<CandidateGetConnecRequest>(candidate.getMyConnections().stream()
 					.map(item -> new CandidateGetConnecRequest(item.getId(), item.getName(), item.getLastName(),
 							item.getEmail(), item.getProfilePhoto(), item.getGender()))
