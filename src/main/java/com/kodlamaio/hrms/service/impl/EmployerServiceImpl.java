@@ -163,7 +163,7 @@ public class EmployerServiceImpl implements EmployerService {
 	@Override
 	public Employer getById(Long employerId) {
 
-		return this.employerRepository.findById(employerId).orElseThrow();
+		return this.employerRepository.findById(employerId).get();
 	}
 
 	@Override
@@ -178,7 +178,7 @@ public class EmployerServiceImpl implements EmployerService {
 			}
 
 			employer = this.employerRepository.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest))
-					.orElseThrow();
+					.get();
 			emailParse = employer.getEmail().split("@");
 			webParse = employerUpdateRequest.getWebAddress().replace("www.", "");
 			if (!webParse.equals(emailParse[1])) {
@@ -199,7 +199,7 @@ public class EmployerServiceImpl implements EmployerService {
 		Employer employer = null;
 		try {
 			employer = this.employerRepository.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest))
-					.orElseThrow();
+					.get();
 			DataResult<Map<String, String>> result = this.imageService.uploadImage(file);
 			employer.setProfilePhoto(result.getData().get("url"));
 			this.employerRepository.save(employer);
@@ -247,7 +247,7 @@ public class EmployerServiceImpl implements EmployerService {
 		try {
 			Candidate candidate = this.candidateService.findByIdForSevices(candidateId);
 			Employer employer = this.employerRepository
-					.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest)).orElseThrow();
+					.findById(this.tokenProvider.getUserIdFromRequest(httpServletRequest)).get();
 			candidate.getFollowings().removeIf(obj -> obj.getId() == employer.getId());
 			employer.getFollowers().removeIf(obj -> obj.getId() == candidate.getId());
 			this.employerRepository.save(employer);
@@ -367,7 +367,7 @@ public class EmployerServiceImpl implements EmployerService {
 
 	@Override
 	public Employer getEmployerForAdmin(Long id) {
-		return this.employerRepository.findById(id).orElseThrow();
+		return this.employerRepository.findById(id).get();
 	}
 
 	@Override
@@ -378,7 +378,7 @@ public class EmployerServiceImpl implements EmployerService {
 
 	@Override
 	public Employer findEmployerOtherService(Long id) {
-		return this.employerRepository.findById(id).orElseThrow();
+		return this.employerRepository.findById(id).get();
 	}
 
 	@Override
