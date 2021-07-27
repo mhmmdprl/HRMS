@@ -18,3 +18,4 @@ public class DataResult<T> extends Result {
 		return this.data;
 	}
 }
+

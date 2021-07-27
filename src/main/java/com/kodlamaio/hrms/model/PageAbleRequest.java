@@ -7,9 +7,9 @@ import lombok.Setter;
 @Setter
 public class PageAbleRequest {
 
-	private int minPage;
+	private int page;
 	
-	private int maxPage;
+	private int size;
 	
 	private String sortBy;
 }

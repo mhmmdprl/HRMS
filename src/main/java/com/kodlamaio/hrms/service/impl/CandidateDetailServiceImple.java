@@ -11,7 +11,7 @@ import com.kodlamaio.hrms.result.SuccessResult;
 import com.kodlamaio.hrms.service.CandidateDetailService;
 
 @Service
-public class CanidateDetailService implements CandidateDetailService {
+public class CandidateDetailServiceImple implements CandidateDetailService {
 
 	@Autowired
 	private CandidateDetailRepository candidateDetailRepository;

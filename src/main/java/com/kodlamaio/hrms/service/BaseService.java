@@ -1,9 +1,9 @@
 package com.kodlamaio.hrms.service;
 
-import com.kodlamaio.hrms.result.DataResult;
+import com.kodlamaio.hrms.result.Result;
 
 public interface BaseService<T> {
 
-	DataResult<T> save(T entity);
+	Result save(T entity);
 	
 }

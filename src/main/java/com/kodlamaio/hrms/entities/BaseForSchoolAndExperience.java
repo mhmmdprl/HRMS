@@ -18,7 +18,7 @@ import lombok.Setter;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "base_for_school_and_experience")
-public class BaseForSchoolAndExperience {
+public class BaseForSchoolAndExperience  {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

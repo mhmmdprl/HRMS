@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import com.kodlamaio.hrms.entities.ProgrammingLanguage;
 import com.kodlamaio.hrms.entities.School;
 import com.kodlamaio.hrms.entities.WorkExperience;
 import com.kodlamaio.hrms.enums.Status;
+import com.kodlamaio.hrms.model.AbilityRequest;
 import com.kodlamaio.hrms.model.CandidateDetailRequest;
 import com.kodlamaio.hrms.model.CvGetRequest;
 import com.kodlamaio.hrms.model.CvSaveRequest;
@@ -37,16 +40,17 @@ import com.kodlamaio.hrms.service.CandidateDetailService;
 import com.kodlamaio.hrms.service.CandidateService;
 import com.kodlamaio.hrms.service.CvService;
 import com.kodlamaio.hrms.service.ImageService;
+import com.kodlamaio.hrms.util.TokenProvider;
 
 @Service
 public class CvServiceImpl implements CvService {
 
 	@Autowired
 	private ImageService imageService;
-	
+
 	@Autowired
 	private CandidateDetailService candidateDetailService;
-	
+
 	@Autowired
 	private CvRepository cvRepository;
 
@@ -59,11 +63,14 @@ public class CvServiceImpl implements CvService {
 	@Autowired
 	private CandidateService candidateService;
 
+	@Autowired
+	private TokenProvider tokenProvider;
+
 	@Override
-	public Result save(CvSaveRequest cvSaveRequest) {
+	public Result save(CvSaveRequest cvSaveRequest, HttpServletRequest request) {
 
 		Cv cv = null;
-	
+
 		try {
 			cv = new Cv();
 			cv.setAbilities(cvSaveRequest.getAbilitiyIds().stream().map(item -> this.abilityService.findById(item))
@@ -75,6 +82,7 @@ public class CvServiceImpl implements CvService {
 			candidateDetail.setLanguages(cvSaveRequest.getCandidateDetail().getLanguages().stream()
 					.map(item -> this.modelMapper.map(item, Language.class)).collect(Collectors.toList()));
 			candidateDetail.setForeword(cvSaveRequest.getCandidateDetail().getForeword());
+			candidateDetail.setPhoto(cvSaveRequest.getCandidateDetail().getPhoto());
 			candidateDetail.setGitHubAddress(cvSaveRequest.getCandidateDetail().getGitHubAddress());
 			candidateDetail.setLinkedInAddress(cvSaveRequest.getCandidateDetail().getLinkedInAddress());
 			cv.setCandidateDetail(candidateDetail);
@@ -109,7 +117,8 @@ public class CvServiceImpl implements CvService {
 
 			this.candidateDetailService.save(candidateDetail);
 			this.cvRepository.save(cv);
-			Candidate candidate = this.candidateService.findById(cvSaveRequest.getCandidateId());
+			Candidate candidate = this.candidateService
+					.findByIdForSevices(this.tokenProvider.getUserIdFromRequest(request));
 			candidate.setCv(cv);
 			this.candidateService.save(candidate);
 
@@ -151,7 +160,7 @@ public class CvServiceImpl implements CvService {
 			return new ErrorDataResult<List<CvGetRequest>>("Hata : " + e.getMessage());
 		}
 
-		return new SuccessDataResult<List<CvGetRequest>>(cvGetRequests);
+		return new ErrorDataResult<List<CvGetRequest>>("Cv bulunumadı");
 	}
 
 	@Override
@@ -161,6 +170,137 @@ public class CvServiceImpl implements CvService {
 		cv.getCandidateDetail().setPhoto(result.getData().get("url"));
 		this.cvRepository.save(cv);
 		return new SuccessResult("Resim Eklendi");
+	}
+
+
+
+	@Override
+	public DataResult<CvGetRequest> findById(Long id) {
+		Cv cv = null;
+		CvGetRequest cvGetRequest = null;
+		try {
+			cv = this.candidateService.findByIdForSevices(id)
+					.getCv();
+			cvGetRequest = new CvGetRequest();
+			if (cv == null) {
+				return new ErrorDataResult<CvGetRequest>("Cv bulunumadı !");
+			}
+			cvGetRequest.setId(cv.getId());
+			cvGetRequest.setAbilities(cv.getAbilities().stream()
+					.map(item -> this.modelMapper.map(item, AbilityRequest.class)).collect(Collectors.toList()));
+			cvGetRequest
+					.setCandidateDetail(this.modelMapper.map(cv.getCandidateDetail(), CandidateDetailRequest.class));
+			cvGetRequest.setExperiences(cv.getExperiences().stream()
+					.map(experience -> this.modelMapper.map(experience, WorkExperienceRequest.class))
+					.collect(Collectors.toList()));
+			cvGetRequest.setSchoolRequests(cv.getSchools().stream()
+					.map(school -> this.modelMapper.map(school, SchoolRequest.class)).collect(Collectors.toList()));
+			cvGetRequest.setCvName(cv.getCvName());
+
+		} catch (Exception e) {
+			return new ErrorDataResult<CvGetRequest>("Özgeçmiş listenirken bir hata oluştu!");
+		}
+		return new SuccessDataResult<CvGetRequest>(cvGetRequest);
+	}
+
+	@Override
+	public Result updateSchool(Long cvId, List<SchoolRequest> schoolRequest) {
+		Cv cv = null;
+		try {
+			cv = this.cvRepository.findById(cvId).orElseThrow();
+			cv.setSchools(schoolRequest.stream().map(school -> this.modelMapper.map(school, School.class))
+					.collect(Collectors.toList()));
+			cv.getSchools().forEach(item -> {
+
+				if (item.getQuitDate() == null) {
+					item.setStatus(Status.RESUM.getValue());
+					item.setAvtice(true);
+				} else {
+					item.setStatus(Status.GRADUATED.getValue());
+					item.setAvtice(false);
+				}
+			});
+			this.cvRepository.save(cv);
+		} catch (Exception e) {
+			return new ErrorResult("Güncelleme sırasında bir hata oluştu");
+		}
+		return new SuccessResult("Güncellendi");
+	}
+
+	@Override
+	public Result updateExperience(Long cvId, List<WorkExperienceRequest> experiences) {
+		Cv cv = null;
+		try {
+			cv = this.cvRepository.findById(cvId).orElseThrow();
+			cv.setExperiences(experiences.stream().map(exp -> this.modelMapper.map(exp, WorkExperience.class))
+					.collect(Collectors.toList()));
+			cv.getExperiences().forEach(item -> {
+
+				if (item.getQuitDate() == null) {
+					item.setStatus(Status.RESUM.getValue());
+					item.setAvtice(true);
+				} else {
+					item.setStatus(Status.LEAVED.getValue());
+					item.setAvtice(false);
+				}
+			});
+			this.cvRepository.save(cv);
+		} catch (Exception e) {
+			return new ErrorResult("Güncelleme sırasında bir hata oluştu");
+		}
+		return new SuccessResult("Güncellendi");
+
+	}
+
+	@Override
+	public Result updateLanguages(Long cvId, List<LanguagesRequest> langs) {
+		Cv cv = null;
+		CandidateDetail candidateDetail = null;
+		try {
+			cv = this.cvRepository.findById(cvId).orElseThrow();
+			candidateDetail = cv.getCandidateDetail();
+			candidateDetail.setLanguages(langs.stream().map(item -> this.modelMapper.map(item, Language.class))
+					.collect(Collectors.toList()));
+			cv.setCandidateDetail(candidateDetail);
+			this.candidateDetailService.save(candidateDetail);
+
+		} catch (Exception e) {
+			return new ErrorResult("Güncelleme sırasında bir hata oluştu");
+		}
+		return new SuccessResult("İşlem başarılı");
+	}
+
+	@Override
+	public Result updateProgLanguages(Long cvId, List<ProgrammingLanguageRequest> progLangs) {
+		Cv cv = null;
+		CandidateDetail candidateDetail = null;
+		try {
+			cv = this.cvRepository.findById(cvId).orElseThrow();
+			candidateDetail = cv.getCandidateDetail();
+			candidateDetail.setProgrammingLanguages(progLangs.stream()
+					.map(item -> this.modelMapper.map(item, ProgrammingLanguage.class)).collect(Collectors.toList()));
+			cv.setCandidateDetail(candidateDetail);
+			this.candidateDetailService.save(candidateDetail);
+
+		} catch (Exception e) {
+			return new ErrorResult("Güncelleme sırasında bir hata oluştu");
+		}
+		return new SuccessResult("İşlem başarılı");
+	}
+
+	@Override
+	public Result updateAbilities(Long cvId, List<AbilityRequest> abilities) {
+		Cv cv = null;
+
+		try {
+			cv = this.cvRepository.findById(cvId).orElseThrow();
+			cv.setAbilities(abilities.stream().map(item -> this.abilityService.findByName(item.getAbilityName()))
+					.collect(Collectors.toList()));
+			this.cvRepository.save(cv);
+		} catch (Exception e) {
+			return new ErrorResult("Güncelleme sırasında bir hata oluştu");
+		}
+		return new SuccessResult("İşlem başarılı");
 	}
 
 }

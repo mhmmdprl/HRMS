@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.kodlamaio.hrms.result.ErrorDataResult;
+
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class ValidationException extends ResponseEntityExceptionHandler {
 
     @Override
+   
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
                                                                   HttpStatus status, WebRequest request) {
@@ -27,15 +30,16 @@ public class ValidationException extends ResponseEntityExceptionHandler {
         body.put("status", status.value());
 
         //Get all errors
-        List<String> errors = ex.getBindingResult()
+        List<String> validationErrors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(x -> x.getDefaultMessage())
                 .collect(Collectors.toList());
 
-        body.put("errors", errors);
+        body.put("errors", validationErrors);
+        ErrorDataResult<Object> errors = new ErrorDataResult<Object>(body, "Doğrulama hataları");
 
-        return new ResponseEntity<>(body, headers, status);
+        return new ResponseEntity<>(errors, headers, status);
 
     }
 

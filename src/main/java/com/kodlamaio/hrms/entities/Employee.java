@@ -9,11 +9,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "employees")
 @Getter
-public class Employee extends BaseEntity {
-	
-	private String email;
-	
-	private String password;
+public class Employee extends User {
+
 	
 	private String firstName;
 	

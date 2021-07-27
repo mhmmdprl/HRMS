@@ -5,11 +5,13 @@ import java.util.List;
 
 
 import lombok.Getter;
+import lombok.Setter;
+
 
 @Getter
+@Setter
 public class CvSaveRequest {
 
-	private Long candidateId;
 	
 	private String cvName;
 

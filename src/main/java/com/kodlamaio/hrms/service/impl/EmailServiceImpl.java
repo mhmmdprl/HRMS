@@ -5,6 +5,10 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import com.kodlamaio.hrms.model.MailRequest;
+import com.kodlamaio.hrms.result.ErrorResult;
+import com.kodlamaio.hrms.result.Result;
+import com.kodlamaio.hrms.result.SuccessResult;
 import com.kodlamaio.hrms.service.EmailService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,5 +34,21 @@ public class EmailServiceImpl implements EmailService{
 		}
 		
 	}
+	@Override
+	public Result sendMail(MailRequest mailRequest) {
+		SimpleMailMessage mailMessage=null;
+		try {
+			mailMessage=new SimpleMailMessage();
+			mailMessage.setFrom(mailRequest.getFrom());
+			mailMessage.setTo(mailRequest.getTo());
+			mailMessage.setText(mailRequest.getText());
+			mailMessage.setSubject(mailRequest.getSubject());
+			this.javaMailSender.send(mailMessage);
+		} catch (Exception e) {
+			return new ErrorResult("Mail gönderilemedi");
+		}
+		return new SuccessResult("Mail gönderildi");
+	}
+	
 
 }

@@ -36,7 +36,7 @@ public class VerificationServiceImpl implements VerificationService {
 
 	@Override
 	public Result activation(String verificationCode) {
-		Verification verification = this.findByVerificationCode(verificationCode);
+		Verification verification = this.verificationRepository.findByVerificationCode(verificationCode);
 		if (verification == null) {
 			return new ErrorResult("Geçersiz aktivasyon işlemi!");
 		}
@@ -51,7 +51,7 @@ public class VerificationServiceImpl implements VerificationService {
 		this.userRepository.save(user);
 		verification.setDeleted('1');
 		this.verificationRepository.save(verification);
-		return new SuccessResult("Aktivasyon işleminiz başarılı bir şekilde gerçekleşmiştir.");
+		return new SuccessResult("Aktivasyon işleminiz başarılı bir şekilde gerçekleşmiştir.Giriş sayfasına gidip giriş yapabilirsiniz");
 
 	}
 

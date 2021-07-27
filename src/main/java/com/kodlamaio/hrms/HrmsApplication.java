@@ -1,23 +1,65 @@
 package com.kodlamaio.hrms;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+
+//import java.time.LocalDate;
+//import java.time.Month;
+//import java.util.ArrayList;
+//import java.util.Arrays;
+//import java.util.List;
+//import java.util.Random;
+//
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.CommandLineRunner;
+//
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+//import com.kodlamaio.hrms.entities.Ability;
+//import com.kodlamaio.hrms.entities.Candidate;
+//import com.kodlamaio.hrms.entities.City;
+//import com.kodlamaio.hrms.entities.Employer;
+//import com.kodlamaio.hrms.entities.JobTitle;
+//import com.kodlamaio.hrms.entities.Operation;
+//import com.kodlamaio.hrms.entities.Role;
+//import com.kodlamaio.hrms.repository.AbilityRepository;
+//import com.kodlamaio.hrms.repository.CandidateRepository;
+//import com.kodlamaio.hrms.repository.CityRepository;
+//import com.kodlamaio.hrms.repository.EmployerRepository;
+//import com.kodlamaio.hrms.repository.JobTitleRepository;
+//import com.kodlamaio.hrms.repository.OperationRepository;
+//import com.kodlamaio.hrms.repository.RoleRepository;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.kodlamaio.hrms.entities.Ability;
 import com.kodlamaio.hrms.entities.Candidate;
 import com.kodlamaio.hrms.entities.City;
+import com.kodlamaio.hrms.entities.Employee;
 import com.kodlamaio.hrms.entities.JobTitle;
+import com.kodlamaio.hrms.entities.Operation;
+import com.kodlamaio.hrms.entities.Role;
 import com.kodlamaio.hrms.repository.AbilityRepository;
 import com.kodlamaio.hrms.repository.CandidateRepository;
 import com.kodlamaio.hrms.repository.CityRepository;
+import com.kodlamaio.hrms.repository.EmployeeRepository;
 import com.kodlamaio.hrms.repository.JobTitleRepository;
+import com.kodlamaio.hrms.repository.OperationRepository;
+import com.kodlamaio.hrms.repository.RoleRepository;
 
 @SpringBootApplication
+
 public class HrmsApplication implements CommandLineRunner {
 	@Autowired
 	private AbilityRepository abilityRepo;
@@ -25,8 +67,31 @@ public class HrmsApplication implements CommandLineRunner {
 	private JobTitleRepository jobRepository;
 	@Autowired
 	private CityRepository cityRepository;
+//	@Autowired
+//	private CandidateRepository candidateRepository;
+	@Autowired
+	private BCryptPasswordEncoder encode;
+//	
+//	@Autowired
+//	private EmployerRepository empRepo;
+//	
+	@Autowired
+	private RoleRepository roleRepository;
+//	@Autowired
+//	private OperationRepository operationRepository;
+
+//	@Autowired
+//	private MessageChannelRepository channelRepository;
+//	
 	@Autowired
 	private CandidateRepository candidateRepository;
+
+	@Autowired
+	private EmployeeRepository employeeRepository;
+	@Autowired
+	private OperationRepository operationRepository;
+	@Autowired
+	public RequestMappingHandlerMapping requestMappingHandlerMapping;
 
 	public static void main(String[] args) {
 		SpringApplication.run(HrmsApplication.class, args);
@@ -35,6 +100,88 @@ public class HrmsApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
+		Role role = new Role();
+		Role role1 = new Role();
+
+		Role role2 = new Role();
+
+		role.setCode("CANDIDATE");
+		role.setName("Candidate");
+		role.setDescription("Sadece adaylar");
+		role1.setCode("EMPLOYER");
+		role1.setName("Employer");
+		role1.setDescription("Sadece işverenler");
+		role2.setCode("ADMIN");
+		role2.setName("Admin");
+		role2.setDescription("Sadece adminler");
+
+		this.roleRepository.save(role);
+		this.roleRepository.save(role1);
+	
+
+		for (RequestMappingInfo a : requestMappingHandlerMapping.getHandlerMethods().keySet()) {
+			String path = a.getPatternsCondition().getPatterns().toArray()[0].toString();
+			String code = (a.getMethodsCondition().isEmpty() ? "GET"
+					: a.getMethodsCondition().getMethods().toArray()[0].toString());
+			if (!path.contains("api")) {
+		       Operation operation=new Operation();
+		       operation.setCode(path+"_"+code);
+		       operation.setMethod(code);
+		       operation.setPath(path);
+		       this.operationRepository.save(operation);
+               role2.getOperations().add(operation);
+ 			}
+
+		}
+		this.roleRepository.save(role2);
+
+		Employee employee = new Employee();
+		employee.setEmail("admin6115");
+		employee.setPassword(encode.encode("piral6115"));
+		employee.setFirstName("Muhammed");
+		employee.setLastName("Piral");
+		employee.setRoles(Arrays.asList(role2));
+		this.employeeRepository.save(employee);
+		
+		String[] name= {"Ahmet","Mehmet","Samet","Sinan","Ali Rıza","Hakkı","Can","Ramazan","Arif","Hakan","Ali","Recep","Burhan"
+				,"Orhan","Serdar","Yavuz","Mecnun","Aslı","Ece","Hatice","Filiz","Merve","Büşra","Cemile","Ecem","Derya","Deniz","Kübra"};
+		
+		String[] lastName= {"Yılmaz","Yıldız","Balçık","Demir","Aslan","Çolak","Ercankan","Manap","Savaş","Aydın","Solmaz","Doğam","Sancak"};
+		
+		String[] email= {"@gmail.com","@hotmail.com","@outlook.com"};
+		
+		List<LocalDate> dates=new ArrayList<LocalDate>();
+		dates=Arrays.asList(LocalDate.of(1998, Month.AUGUST, 18),LocalDate.of(1995, Month.FEBRUARY, 23),LocalDate.of(2000, Month.MARCH, 2),LocalDate.of(2001, Month.APRIL, 13));
+		Random rand=new Random();
+		for(int i=1;i<100;i++) {
+			Candidate bootCandidate=new Candidate();
+			int randResulForName=rand.nextInt(27);
+			Long tcRandNumber=rand.nextLong();
+			bootCandidate.setName(name[randResulForName]);
+			bootCandidate.setLastName(lastName[rand.nextInt(12)]);
+			bootCandidate.setEmail(bootCandidate.getName()+bootCandidate.getLastName()+"_"+i+email[rand.nextInt(2)]);
+			bootCandidate.setIdentityNumber(tcRandNumber);
+			bootCandidate.setBirtOfDate(dates.get(rand.nextInt(3)));
+			bootCandidate.setPassword(encode.encode("piral"));
+			bootCandidate.getRoles().add(role);
+			if(randResulForName<17)
+				bootCandidate.setGender("Erkek");
+			else
+				bootCandidate.setGender("Kadın");
+			
+			this.candidateRepository.save(bootCandidate);
+		}
+		
+		Ability ability = new Ability();
+		ability.setAbilityName("Yüzme");
+		this.abilityRepo.save(ability);
+		Ability ability1 = new Ability();
+		ability1.setAbilityName("Futbol");
+		this.abilityRepo.save(ability1);
+		
+		Ability ability2 = new Ability();
+		ability2.setAbilityName("Santranç");
+		
 		List<String> titles = Arrays.asList("Software Engineer", "Computer Engineer", "Machine Engineer");
 
 		List<String> cities = Arrays.asList("Adana", "Adıyaman", "Afyon", "Ağrı", "Amasya", "Ankara", "Antalya",
@@ -58,15 +205,6 @@ public class HrmsApplication implements CommandLineRunner {
 			this.jobRepository.save(jobTitle);
 
 		});
-
-		Ability ability = new Ability();
-		ability.setAbilityName("Java");
-		this.abilityRepo.save(ability);
-		Candidate candidate=new Candidate();
-		candidate.setEmail("m@m.com");
-		candidate.setName("muhammed");
-		candidate.setLastName("piral");
-		this.candidateRepository.save(candidate);
 
 	}
 
