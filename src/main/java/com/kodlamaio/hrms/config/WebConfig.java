@@ -53,6 +53,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/passwordResetToken/createToken").permitAll()
 				.antMatchers("/api/passwordResetToken/checkToken").permitAll()
 				.antMatchers("/api/passwordResetToken/resetPassword").permitAll()
+				.antMatchers("/api/verification/activeToken").permitAll()
 				.antMatchers("/api/test/testapi").permitAll()
 				.antMatchers("/ws/**").permitAll()
 				.anyRequest().authenticated()

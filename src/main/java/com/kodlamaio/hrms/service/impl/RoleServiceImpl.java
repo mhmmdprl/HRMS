@@ -78,4 +78,10 @@ public class RoleServiceImpl implements RoleService {
 		return this.roleRepository.findById(id).get();
 	}
 
+	@Override
+	public Role findByCode(String code) {
+		
+		return this.roleRepository.findByCode(code);
+	}
+
 }

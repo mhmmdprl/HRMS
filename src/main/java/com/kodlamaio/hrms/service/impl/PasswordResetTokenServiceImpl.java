@@ -39,7 +39,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
 		PasswordResetToken passwordResetToken = null;
 		PasswordResetToken isExistPasswordResetToken = null;
 		String token = null;
-		String url = "http://localhost:3000/auth/changePassword/";
+		String url = "http://mpiral.com/auth/changePassword/";
 
 		try {
 			if (this.userService.existsByEmailAndDeleted(email)) {

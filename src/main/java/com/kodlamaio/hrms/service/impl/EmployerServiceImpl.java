@@ -81,7 +81,7 @@ public class EmployerServiceImpl implements EmployerService {
 		String webParse = null;
 		String token = null;
 		Verification verification = null;
-		String url = "http://localhost:3000/auth/activation/";
+		String url = "http://mpiral.com/auth/activation/";
 		try {
 
 			if (this.employerRepository.existsByEmail(employerRequest.getEmail())) {
@@ -124,7 +124,7 @@ public class EmployerServiceImpl implements EmployerService {
 			employer.setPhoneNumber(employerRequest.getPhoneNumber());
 			employer.setWebAddress(employerRequest.getWebAddress());
 			employer.setAboutCompany(employerRequest.getAboutCompany());
-			employer.setRoles(Arrays.asList(this.roleService.findById(2l)));
+			employer.setRoles(Arrays.asList(this.roleService.findByCode("EMPLOYER")));
 			this.employerRepository.save(employer);
 
 			verification = new Verification();

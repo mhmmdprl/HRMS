@@ -17,5 +17,5 @@ public interface RoleService {
 
 	Role findById(long id);
 	
-
+    Role findByCode(String code);
 }

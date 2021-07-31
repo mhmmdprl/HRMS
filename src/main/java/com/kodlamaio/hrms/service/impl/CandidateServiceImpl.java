@@ -102,7 +102,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 		Candidate candidate = null;
 		Verification verification = null;
 		String token = null;
-		String url = "http://localhost:3000/auth/activation/";
+		String url = "http://mpiral.com/auth/activation/";
 		try {
 			if (this.existsEmployeeByEmail(requestCandidate.getEmail())) {
 				candidate = this.candidateRepository.findByEmail(requestCandidate.getEmail());
@@ -138,7 +138,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 			}
 			token = UUID.randomUUID().toString();
 			verification = new Verification();
-			requestCandidate.setRoles(Arrays.asList(this.roleService.findById(1l)));
+			requestCandidate.setRoles(Arrays.asList(this.roleService.findByCode("CANDIDATE")));
 			candidate = this.candidateRepository.save(requestCandidate);
 			verification.setUserId(candidate.getId());
 			verification.setVerificationCode(token);

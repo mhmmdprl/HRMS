@@ -115,7 +115,7 @@ public class HrmsApplication implements CommandLineRunner {
 		role2.setName("Admin");
 		role2.setDescription("Sadece adminler");
 
-		this.roleRepository.save(role);
+	
 		this.roleRepository.save(role1);
 	
 
@@ -129,12 +129,15 @@ public class HrmsApplication implements CommandLineRunner {
 		       operation.setMethod(code);
 		       operation.setPath(path);
 		       this.operationRepository.save(operation);
+		       if (!path.contains("admin")) {
+		    	   role.getOperations().add(operation);
+		       }
                role2.getOperations().add(operation);
  			}
 
 		}
 		this.roleRepository.save(role2);
-
+		this.roleRepository.save(role);
 		Employee employee = new Employee();
 		employee.setEmail("admin6115");
 		employee.setPassword(encode.encode("piral6115"));
@@ -164,6 +167,7 @@ public class HrmsApplication implements CommandLineRunner {
 			bootCandidate.setBirtOfDate(dates.get(rand.nextInt(3)));
 			bootCandidate.setPassword(encode.encode("piral"));
 			bootCandidate.getRoles().add(role);
+			bootCandidate.setAcctive(true);
 			if(randResulForName<17)
 				bootCandidate.setGender("Erkek");
 			else
