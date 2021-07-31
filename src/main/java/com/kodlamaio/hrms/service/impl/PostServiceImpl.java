@@ -44,6 +44,9 @@ public class PostServiceImpl implements PostService {
 		Candidate candidate=null;
 		Post post = null;
 		try {
+			if(postRequest.getPostPhoto().isEmpty()&&postRequest.getPostText().isEmpty()) {
+				return new ErrorResult("Boş gönderi paylaşılamaz!");
+			}
 			candidate=this.candidateService.findByIdForSevices(id);
 			post = new Post();
 			post.setPostText(postRequest.getPostText());
