@@ -54,7 +54,6 @@ public class CandidateController {
 		candidate.setEmail(candidateRequest.getEmail());
 		candidate.setPassword(this.bCryptPasswordEncoder.encode(candidateRequest.getPassword()));
 		candidate.setBirtOfDate(candidateRequest.getBirtOfDate());
-		candidate.setIdentityNumber(candidateRequest.getIdentityNumber());
 		candidate.setGender(candidateRequest.getGender());
 
 		return this.candidateService.save(candidate);

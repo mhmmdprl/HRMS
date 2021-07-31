@@ -58,6 +58,11 @@ public class LoginController {
 			if (!(employeeService.existsEmployeeById(user.getId()))) {
 				if (!user.isAcctive()) {
 					return new ErrorResult("Hesabınız Aktif değildir");
+				}if(user.getDeleted()=='1') {
+					return new ErrorResult("Bu hesap silinmiştir");
+				}
+				if(user.isLock()) {
+					return new ErrorResult("Hesabınız askıya alınmıştır");
 				}
 				if (employerService.existsEmployerById(user.getId())) {
 					employer = this.employerService.findEmployerOtherService(user.getId());

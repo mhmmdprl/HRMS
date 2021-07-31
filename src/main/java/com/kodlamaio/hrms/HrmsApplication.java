@@ -115,28 +115,27 @@ public class HrmsApplication implements CommandLineRunner {
 		role2.setName("Admin");
 		role2.setDescription("Sadece adminler");
 
-	
-		this.roleRepository.save(role1);
-	
-
 		for (RequestMappingInfo a : requestMappingHandlerMapping.getHandlerMethods().keySet()) {
 			String path = a.getPatternsCondition().getPatterns().toArray()[0].toString();
 			String code = (a.getMethodsCondition().isEmpty() ? "GET"
 					: a.getMethodsCondition().getMethods().toArray()[0].toString());
 			if (!path.contains("api")) {
-		       Operation operation=new Operation();
-		       operation.setCode(path+"_"+code);
-		       operation.setMethod(code);
-		       operation.setPath(path);
-		       this.operationRepository.save(operation);
-		       if (!path.contains("admin")) {
-		    	   role.getOperations().add(operation);
-		       }
-               role2.getOperations().add(operation);
- 			}
+				Operation operation = new Operation();
+				operation.setCode(path + "_" + code);
+				operation.setMethod(code);
+				operation.setPath(path);
+				this.operationRepository.save(operation);
+				if (!path.contains("admin")) {
+					role.getOperations().add(operation);
+					role1.getOperations().add(operation);
+				}
+				role2.getOperations().add(operation);
+
+			}
 
 		}
 		this.roleRepository.save(role2);
+		this.roleRepository.save(role1);
 		this.roleRepository.save(role);
 		Employee employee = new Employee();
 		employee.setEmail("admin6115");
@@ -145,48 +144,60 @@ public class HrmsApplication implements CommandLineRunner {
 		employee.setLastName("Piral");
 		employee.setRoles(Arrays.asList(role2));
 		this.employeeRepository.save(employee);
-		
-		String[] name= {"Ahmet","Mehmet","Samet","Sinan","Ali Rıza","Hakkı","Can","Ramazan","Arif","Hakan","Ali","Recep","Burhan"
-				,"Orhan","Serdar","Yavuz","Mecnun","Aslı","Ece","Hatice","Filiz","Merve","Büşra","Cemile","Ecem","Derya","Deniz","Kübra"};
-		
-		String[] lastName= {"Yılmaz","Yıldız","Balçık","Demir","Aslan","Çolak","Ercankan","Manap","Savaş","Aydın","Solmaz","Doğam","Sancak"};
-		
-		String[] email= {"@gmail.com","@hotmail.com","@outlook.com"};
-		
-		List<LocalDate> dates=new ArrayList<LocalDate>();
-		dates=Arrays.asList(LocalDate.of(1998, Month.AUGUST, 18),LocalDate.of(1995, Month.FEBRUARY, 23),LocalDate.of(2000, Month.MARCH, 2),LocalDate.of(2001, Month.APRIL, 13));
-		Random rand=new Random();
-		for(int i=1;i<100;i++) {
-			Candidate bootCandidate=new Candidate();
-			int randResulForName=rand.nextInt(27);
-			Long tcRandNumber=rand.nextLong();
+
+		String[] name = { "Ahmet", "Mehmet", "Samet", "Sinan", "Ali Rıza", "Hakkı", "Can", "Ramazan", "Arif", "Hakan",
+				"Ali", "Recep", "Burhan", "Orhan", "Serdar", "Yavuz", "Mecnun", "Aslı", "Ece", "Hatice", "Filiz",
+				"Merve", "Büşra", "Cemile", "Ecem", "Derya", "Deniz", "Kübra" };
+
+		String[] lastName = { "Yılmaz", "Yıldız", "Balçık", "Demir", "Aslan", "Çolak", "Ercankan", "Manap", "Savaş",
+				"Aydın", "Solmaz", "Doğam", "Sancak" };
+
+		String[] email = { "@gmail.com", "@hotmail.com", "@outlook.com" };
+
+		List<LocalDate> dates = new ArrayList<LocalDate>();
+		dates = Arrays.asList(LocalDate.of(1998, Month.AUGUST, 18), LocalDate.of(1995, Month.FEBRUARY, 23),
+				LocalDate.of(2000, Month.MARCH, 2), LocalDate.of(2001, Month.APRIL, 13));
+		Random rand = new Random();
+		for (int i = 1; i < 100; i++) {
+			Candidate bootCandidate = new Candidate();
+			int randResulForName = rand.nextInt(27);
+			Long tcRandNumber = rand.nextLong();
 			bootCandidate.setName(name[randResulForName]);
 			bootCandidate.setLastName(lastName[rand.nextInt(12)]);
-			bootCandidate.setEmail(bootCandidate.getName()+bootCandidate.getLastName()+"_"+i+email[rand.nextInt(2)]);
+			bootCandidate
+					.setEmail(bootCandidate.getName() + bootCandidate.getLastName() + "_" + i + email[rand.nextInt(2)]);
 			bootCandidate.setIdentityNumber(tcRandNumber);
 			bootCandidate.setBirtOfDate(dates.get(rand.nextInt(3)));
 			bootCandidate.setPassword(encode.encode("piral"));
 			bootCandidate.getRoles().add(role);
 			bootCandidate.setAcctive(true);
-			if(randResulForName<17)
+			if (randResulForName < 17)
 				bootCandidate.setGender("Erkek");
 			else
 				bootCandidate.setGender("Kadın");
-			
+
 			this.candidateRepository.save(bootCandidate);
 		}
 		
-		Ability ability = new Ability();
-		ability.setAbilityName("Yüzme");
-		this.abilityRepo.save(ability);
-		Ability ability1 = new Ability();
-		ability1.setAbilityName("Futbol");
-		this.abilityRepo.save(ability1);
-		
-		Ability ability2 = new Ability();
-		ability2.setAbilityName("Santranç");
-		
-		List<String> titles = Arrays.asList("Software Engineer", "Computer Engineer", "Machine Engineer");
+		List<String> abilties = Arrays.asList("Spor Yapmak", "Yürüyüş Yapmak / Koşmak", "Yüzmek",
+				"Oyun Oynamak", "Bisiklet Sürmek", "Kamp Yapmak", "Balık Tutmak",
+				"Bahçeyle Uğraşmak", "Mağaracılık", "Doğa Yürüyüşü (Treking)", "Haber, Dergi veya Makale Okumak",
+				"Forumlarda, Sözlüklerde Takılmak", "e-Spor Oyunları Oynamak", "Blog Açmak",
+				"Web Sitesi Kurmak", "Bir Şeyler Satmak",
+				"Kodlama Öğrenmek", "Dizi – Film İzlemek", "Youtube’da Takılmak",
+				" Freelance İş Yapmak", " Yeni Birileriyle Tanışmak","Çocuklarla Oyun Oynamak:","Kart Oyunları Oynamak",
+				"Satranç Oynamak:","Çizmek","Yabancı Dil Öğrenmek","Yazmak","Kitap Okumak:","Müzeleri Gezmek","Tarihi Yerleri Gezmek");
+
+	
+
+		List<String> titles = Arrays.asList("Biyomedikal mühendisi", "Veri Bilimci", "Yazılım Mühendisi",
+				"Petrol mühendisi", "Bilgisayar Programcısı", "İnşaat Mühendisi", "Makina Mühendisi",
+				"Bilgisayar Mühendisi", "Elektrik Elktronik Mühendisi", "Mekatronik Mühendisi", "Çevre Mühendisi",
+				"Ziraat Mühendisi", "Yazılım Geliştirme Uzmanlığı", "Web Geliştirme Uzmanı",
+				"PMP Proje Yöneticisi (Project Management Professional)", "iOS ve Android Mobil Yazılım Uzmanlıkları",
+				"Oracle Veritabanı Uzmanlığı (DBA)", "Kurumsal Mimari Uzmanlığı - TOGAF", "Teknik Destek Uzmanlığı",
+				"İşletim Sistemi Yöneticiliği", "Sistem, Ağ ve Güvenlik Uzmanlığı","Yemek Yapmak","El Sanatları"," Şarkı Söylemek"
+				,"Dans Etmek","Halk Oyunları","Fotoğrafçılık");
 
 		List<String> cities = Arrays.asList("Adana", "Adıyaman", "Afyon", "Ağrı", "Amasya", "Ankara", "Antalya",
 				"Artvin", "Aydın", "Balıkesir", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale",
@@ -207,6 +218,12 @@ public class HrmsApplication implements CommandLineRunner {
 			JobTitle jobTitle = new JobTitle();
 			jobTitle.setTitle(item);
 			this.jobRepository.save(jobTitle);
+
+		});
+		abilties.forEach(item -> {
+			Ability ability = new Ability();
+			ability.setAbilityName(item);
+			this.abilityRepo.save(ability);
 
 		});
 

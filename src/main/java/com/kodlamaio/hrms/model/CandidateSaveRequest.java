@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sun.istack.NotNull;
+
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,8 +21,8 @@ public class CandidateSaveRequest {
 	
 	@NotBlank(message = "Soy isim boş bırakılamaz")
 	private String lastName;
-	@NotNull
-	private Long identityNumber;
+	/*@NotNull
+	private Long identityNumber;*/
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate birtOfDate;
 	@Email(message = "email formatına uygun girmelisiniz")

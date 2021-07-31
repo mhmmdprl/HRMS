@@ -136,8 +136,9 @@ public class EmployerServiceImpl implements EmployerService {
 		} catch (Exception e) {
 			return new ErrorResult(e.getMessage());
 		}
-		this.simpMessaginTemplate.convertAndSend("/queue/admin-indexpage",true);
-		return new SuccessResult("Kayıt işlemi tamamlandı");
+		this.simpMessaginTemplate.convertAndSend("/queue/admin-indexpage", true);
+		return new SuccessResult(
+				"Kaydınzı tamamlamak için Email adresinize gönderdiğimiz aktivasyon linkine tıklayınız!(Span kutunuzu kontrol etmeyi unutmayınız!)");
 	}
 
 	@Override
@@ -328,13 +329,14 @@ public class EmployerServiceImpl implements EmployerService {
 		Page<Employer> pageEmployer = null;
 		Page<MainFeaturesOfTheEmployer> pageMainFeaturesOfTheEmployer = null;
 		try {
-		
+
 			pageEmployer = this.employerRepository.getCandidateFollows(id, pageable);
 			pageMainFeaturesOfTheEmployer = new PageImpl<MainFeaturesOfTheEmployer>(
 					pageEmployer.stream().map(item -> this.modelMapper.map(item, MainFeaturesOfTheEmployer.class))
-							.collect(Collectors.toList()),pageable,pageEmployer.getTotalElements());
+							.collect(Collectors.toList()),
+					pageable, pageEmployer.getTotalElements());
 		} catch (Exception e) {
-			return new ErrorDataResult<Page<MainFeaturesOfTheEmployer>>("Hata : "+e.getMessage());
+			return new ErrorDataResult<Page<MainFeaturesOfTheEmployer>>("Hata : " + e.getMessage());
 		}
 		return new SuccessDataResult<Page<MainFeaturesOfTheEmployer>>(pageMainFeaturesOfTheEmployer);
 	}
@@ -344,16 +346,18 @@ public class EmployerServiceImpl implements EmployerService {
 		Page<Employer> pageEmployer = null;
 		Page<MainFeaturesOfTheEmployer> pageMainFeaturesOfTheEmployer = null;
 		try {
-		
-			pageEmployer = this.employerRepository.getPassiveEmployer( pageable);
+
+			pageEmployer = this.employerRepository.getPassiveEmployer(pageable);
 			pageMainFeaturesOfTheEmployer = new PageImpl<MainFeaturesOfTheEmployer>(
 					pageEmployer.stream().map(item -> this.modelMapper.map(item, MainFeaturesOfTheEmployer.class))
-							.collect(Collectors.toList()),pageable,pageEmployer.getTotalElements());
+							.collect(Collectors.toList()),
+					pageable, pageEmployer.getTotalElements());
 		} catch (Exception e) {
-			return new ErrorDataResult<Page<MainFeaturesOfTheEmployer>>("Hata : "+e.getMessage());
+			return new ErrorDataResult<Page<MainFeaturesOfTheEmployer>>("Hata : " + e.getMessage());
 		}
 		return new SuccessDataResult<Page<MainFeaturesOfTheEmployer>>(pageMainFeaturesOfTheEmployer);
 	}
+
 	@Override
 	public Page<Employer> getAllEmployer(Pageable pageable) {
 		return this.employerRepository.findAll(pageable);
@@ -361,8 +365,8 @@ public class EmployerServiceImpl implements EmployerService {
 
 	@Override
 	public Page<Employer> findByEmailLikeEmployer(String email, Pageable pageable) {
-		
-		return this.employerRepository.findByEmailLikeEmployer(email,pageable);
+
+		return this.employerRepository.findByEmailLikeEmployer(email, pageable);
 	}
 
 	@Override
@@ -372,7 +376,7 @@ public class EmployerServiceImpl implements EmployerService {
 
 	@Override
 	public boolean existsEmployerById(Long id) {
-	
+
 		return this.employerRepository.existsById(id);
 	}
 
@@ -390,6 +394,5 @@ public class EmployerServiceImpl implements EmployerService {
 	public Employer findByEmail(String email) {
 		return this.employerRepository.findByEmail(email);
 	}
-
 
 }

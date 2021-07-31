@@ -39,7 +39,7 @@ public class CandidateGetRequest {
 	private String name;
 
 	private String lastName;
-
+	@JsonFormat(pattern="yyyy-MM-dd")
 	private LocalDate birtOfDate;
 
 	private String email;

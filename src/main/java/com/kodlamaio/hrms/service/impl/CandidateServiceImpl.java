@@ -151,7 +151,7 @@ public class CandidateServiceImpl extends BaseResultService<Candidate> implement
 		}
 		this.simpMessagingTemp.convertAndSend("/queue/admin-indexpage",true);
 		return new SuccessResult(
-				"Kaydınzı tamamlamak için Email adresinize gönderdiğimiz aktivasyon linkine tıklayınız!");
+				"Kaydınzı tamamlamak için Email adresinize gönderdiğimiz aktivasyon linkine tıklayınız!(Span kutunuzu kontrol etmeyi unutmayınız!)");
 	}
 
 	@Override
